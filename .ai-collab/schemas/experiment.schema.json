@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "__PROJECT_NAME__ Experiment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project", "topic", "hypothesis", "setup", "procedure", "metrics", "results", "conclusion"],
+  "properties": {
+    "project": { "type": "string", "const": "__PROJECT_NAME__" },
+    "topic": { "type": "string" },
+    "hypothesis": { "type": "string" },
+    "setup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataset", "scenario"],
+      "properties": {
+        "dataset": { "type": "string" },
+        "conditions": { "type": "string", "description": "relevant environment / configuration / domain parameters" },
+        "scenario": { "type": "string" },
+        "labels": { "type": "string" }
+      }
+    },
+    "procedure": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "definition"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "examples": ["accuracy", "error_rate", "latency_ms", "throughput", "cpu_load"]
+          },
+          "definition": { "type": "string" },
+          "target": { "type": "string" }
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["metric", "value", "confidence"],
+        "properties": {
+          "metric": { "type": "string" },
+          "value": { "type": "string" },
+          "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "conclusion": { "type": "string" },
+    "next_experiments": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
+

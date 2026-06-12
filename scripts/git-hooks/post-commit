@@ -1,0 +1,39 @@
+#!/bin/sh
+# Dev-branch auto-versioning: every commit on a devX.Y branch gets the next
+# patch tag vX.Y.Z (third digit +1). main is frozen and never auto-tagged.
+#
+# X.Y come from the branch name (dev1.0 -> 1.0). The next patch is one above the
+# highest existing vX.Y.* tag. Merge commits and already-tagged HEADs are skipped.
+
+branch=$(git symbolic-ref --short HEAD 2>/dev/null) || exit 0
+case "$branch" in
+  dev*) ;;
+  *) exit 0 ;;
+esac
+
+ver=${branch#dev}          # dev1.0 -> 1.0
+major=${ver%%.*}
+minor=${ver#*.}
+case "$major" in ''|*[!0-9]*) exit 0 ;; esac
+case "$minor" in ''|*[!0-9]*) exit 0 ;; esac
+
+# Skip if HEAD already carries a tag (e.g. re-run, or a manual tag).
+if git describe --exact-match --tags HEAD >/dev/null 2>&1; then
+  exit 0
+fi
+
+maxp=-1
+for t in $(git tag --list "v$major.$minor.*"); do
+  p=${t##*.}
+  case "$p" in ''|*[!0-9]*) continue ;; esac
+  [ "$p" -gt "$maxp" ] && maxp=$p
+done
+next=$((maxp + 1))
+newtag="v$major.$minor.$next"
+
+if git tag -a "$newtag" -m "dev auto-bump: $newtag" 2>/dev/null; then
+  echo "[post-commit] tagged $newtag"
+fi
+exit 0
+
+

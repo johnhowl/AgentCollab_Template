@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Detect Review Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project", "verdict", "summary", "findings", "required_fixes", "suggested_tests"],
+  "properties": {
+    "project": { "type": "string", "const": "__PROJECT_NAME__" },
+    "verdict": { "type": "string", "enum": ["pass", "pass_with_notes", "fail"] },
+    "summary": { "type": "string" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "file", "line_hint", "issue", "reason"],
+        "properties": {
+          "severity": { "type": "string", "enum": ["blocker", "major", "minor", "note"] },
+          "file": { "type": "string" },
+          "line_hint": { "type": "string" },
+          "issue": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "required_fixes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "suggested_tests": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
+
+

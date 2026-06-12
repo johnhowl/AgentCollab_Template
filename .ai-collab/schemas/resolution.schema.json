@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Detect Alignment Resolution",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project", "round", "aligned", "resolutions"],
+  "properties": {
+    "project": { "type": "string", "const": "__PROJECT_NAME__" },
+    "round": { "type": "integer", "minimum": 1 },
+    "aligned": {
+      "type": "boolean",
+      "description": "true only when every query is resolved into an actionable decision (no defer) and instructions are now consistent"
+    },
+    "resolutions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["query_id", "decision", "ruling", "rationale"],
+        "properties": {
+          "query_id": { "type": "string" },
+          "decision": {
+            "type": "string",
+            "enum": ["accept_codex", "reject", "revise", "defer"]
+          },
+          "ruling": { "type": "string" },
+          "updated_instruction": {
+            "type": "string",
+            "description": "new authoritative text for the questioned item when decision is accept_codex or revise"
+          },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["needed", "summary"],
+      "properties": {
+        "needed": { "type": "boolean" },
+        "summary": { "type": "string", "description": "what the human must decide; required when any decision is defer" }
+      }
+    }
+  }
+}
+

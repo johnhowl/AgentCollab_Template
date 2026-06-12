@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "__PROJECT_NAME__ Test Spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project", "objective", "build", "cases", "acceptance"],
+  "properties": {
+    "project": { "type": "string", "const": "__PROJECT_NAME__" },
+    "objective": { "type": "string" },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["toolchain", "command"],
+      "properties": {
+        "toolchain": { "type": "string", "description": "build/test toolchain label for this project, e.g. compiled / script / none" },
+        "command": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "description", "fixture", "run_command", "expected"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": {
+            "type": "string",
+            "enum": ["unit", "integration", "validation", "regression"]
+          },
+          "description": { "type": "string" },
+          "fixture": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "how_to_make"],
+            "properties": {
+              "path": { "type": "string" },
+              "how_to_make": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          },
+          "run_command": { "type": "string" },
+          "expected": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["description", "tolerance"],
+            "properties": {
+              "description": { "type": "string" },
+              "tolerance": { "type": "string" },
+              "reference_script": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "acceptance": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
+

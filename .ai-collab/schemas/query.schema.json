@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Detect Codex Query",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project", "round", "overall_stance", "queries"],
+  "properties": {
+    "project": { "type": "string", "const": "__PROJECT_NAME__" },
+    "round": { "type": "integer", "minimum": 1 },
+    "overall_stance": {
+      "type": "string",
+      "enum": ["proceed_with_questions", "blocked", "dispute"]
+    },
+    "queries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "refers_to", "type", "question", "codex_position"],
+        "properties": {
+          "id": { "type": "string" },
+          "refers_to": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["artifact", "item_id"],
+            "properties": {
+              "artifact": { "type": "string", "description": "path to the plan/review/test-spec being questioned" },
+              "item_id": { "type": "string", "description": "task id / finding / case id, or 'whole'" }
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": ["clarification", "disagreement", "blocker", "proposal"]
+          },
+          "question": { "type": "string" },
+          "codex_position": { "type": "string", "description": "Codex's own evidence-backed judgement; not a vibe" },
+          "evidence": { "type": "string", "description": "concrete proof: compiler error, command output, contradictory lines" },
+          "proposed_resolution": { "type": "string" }
+        }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Detect Task Summary",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project", "objective", "outcome", "changed_files", "verification", "residual_risks", "decisions"],
+  "properties": {
+    "project": { "type": "string", "const": "__PROJECT_NAME__" },
+    "objective": { "type": "string" },
+    "outcome": { "type": "string", "enum": ["completed", "partial", "blocked"] },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "change"],
+        "properties": {
+          "path": { "type": "string" },
+          "change": { "type": "string" }
+        }
+      }
+    },
+    "verification": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check", "command", "result"],
+        "properties": {
+          "check": { "type": "string" },
+          "command": { "type": "string" },
+          "result": { "type": "string", "enum": ["pass", "fail", "skipped"] },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "value"],
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": "string" },
+          "context": { "type": "string" }
+        }
+      }
+    },
+    "residual_risks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["decision", "rationale"],
+        "properties": {
+          "decision": { "type": "string" },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "next_steps": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
+

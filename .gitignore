@@ -1,0 +1,20 @@
+.ai-collab/out/
+.ai-collab/tmp/
+.ai-collab/logs/
+.ai-collab/runs/
+.ai-collab/dialogue/
+.planning/
+
+# Optional build/test outputs for instantiated projects.
+build/
+dist/
+coverage/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local machine files
+*.user
+*.suo
+*.log

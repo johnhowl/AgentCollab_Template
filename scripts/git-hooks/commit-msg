@@ -1,0 +1,39 @@
+#!/bin/sh
+# __PROJECT_NAME__ guardrail: protected collaboration paths may not be committed
+# unless the commit is authorized by an alignment ruling or an explicit override.
+#
+# This enforces the Tier-B rule mechanically (not on Codex's goodwill):
+# changes to the rules engine / contracts / public interfaces must go through
+# the alignment channel, or carry a deliberate human/Claude authorization.
+#
+# Authorize by adding one of these trailers to the commit message:
+#   Aligned-By: <resolution-id>   (a Claude alignment resolution)
+#   Override: <reason>            (explicit human/Claude authorization)
+
+msg_file="$1"
+
+protected_re='^(\.ai-collab/|scripts/|CLAUDE\.md|AGENTS\.md|COLLABORATION\.md|\.gitignore)'
+
+staged=$(git diff --cached --name-only)
+protected=$(printf '%s\n' "$staged" | grep -E "$protected_re" || true)
+
+if [ -n "$protected" ]; then
+  if grep -qiE '^(Aligned-By:|Override:)' "$msg_file"; then
+    exit 0
+  fi
+  echo "" >&2
+  echo "BLOCKED: commit touches protected collaboration paths without authorization." >&2
+  echo "Protected files staged:" >&2
+  printf '  %s\n' $protected >&2
+  echo "" >&2
+  echo "These are Tier-B changes (rules engine / contracts / public interfaces)." >&2
+  echo "Resolve via the alignment channel, then authorize the commit with a trailer:" >&2
+  echo "  Aligned-By: <resolution-id>" >&2
+  echo "  Override: <reason>" >&2
+  echo "" >&2
+  exit 1
+fi
+
+exit 0
+
+
