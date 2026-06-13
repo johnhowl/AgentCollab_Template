@@ -22,7 +22,10 @@ if (Test-Path $TargetPath) {
     New-Item -ItemType Directory -Force -Path $TargetPath | Out-Null
 }
 
-$exclude = @("New-CollabProject.ps1", "TEMPLATE-README.md")
+# Never copy the template's own VCS history or transient dirs into a new project;
+# the new project gets a fresh git via Initialize-CollabGit.
+$exclude = @("New-CollabProject.ps1", "TEMPLATE-README.md",
+             ".git", ".planning", "build", "__pycache__")
 Get-ChildItem -Force -LiteralPath $TemplateRoot | Where-Object {
     $exclude -notcontains $_.Name
 } | ForEach-Object {
@@ -30,7 +33,9 @@ Get-ChildItem -Force -LiteralPath $TemplateRoot | Where-Object {
 }
 
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
-Get-ChildItem -Force -Recurse -File -LiteralPath $TargetPath | ForEach-Object {
+Get-ChildItem -Force -Recurse -File -LiteralPath $TargetPath | Where-Object {
+    $_.FullName -notmatch '\\(\.git|\.planning|__pycache__|build)\\'
+} | ForEach-Object {
     $text = Get-Content -Raw -Encoding UTF8 -LiteralPath $_.FullName
     $text = $text.Replace("__PROJECT_NAME__", $ProjectName)
     $isHook = ($_.FullName -like "*\scripts\git-hooks\commit-msg") -or
